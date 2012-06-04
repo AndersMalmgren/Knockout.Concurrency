@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <MajorVersion>0.1</MajorVersion>
+    <Filename>Knockout.Concurrency</Filename>
+  </PropertyGroup>
+
+  <UsingTask TaskName="GitVersion" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll" >
+    <ParameterGroup>
+      <LocalPath ParameterType="System.String" />
+      <Path ParameterType="System.String" />
+      <CommitCount ParameterType="System.Int32" Output="true" />
+    </ParameterGroup>
+    <Task>
+      <!--<Reference Include="" />-->
+      <Using Namespace="System"/>
+      <Using Namespace="System.Diagnostics"/>
+      <Code Type="Fragment" Language="cs">
+        <![CDATA[
+LocalPath = LocalPath ?? ".";
+Path = Path ?? "master";
+Log.LogMessage(MessageImportance.Low, "LocalPath is {0}", LocalPath);
+Log.LogMessage(MessageImportance.Low, "Path is {0}", Path);
+var psi = new ProcessStartInfo("cmd", "/c git rev-list " + Path + " --count") {
+UseShellExecute = false,
+ErrorDialog = false,
+CreateNoWindow = false,
+WorkingDirectory = LocalPath,
+RedirectStandardOutput = true,
+RedirectStandardError = true
+};
+
+string result;
+using (var p = Process.Start(psi)) {
+p.WaitForExit();
+if (p.ExitCode != 0) {
+using (var standardError = p.StandardError) {
+Log.LogError(standardError.ReadToEnd());
+}
+return false;
+}
+
+using (var standardOutput = p.StandardOutput) {
+CommitCount = Int32.Parse(standardOutput.ReadToEnd());
+}
+}
+]]>
+      </Code>
+    </Task>
+  </UsingTask>
+
+  <UsingTask
+        TaskName="CompressorTask"
+        AssemblyFile="Yahoo.Yui.Compressor.MsBuildTask.dll"></UsingTask>
+
+  <Target Name="MyTaskTarget">
+    <GitVersion Path="master">
+      <Output PropertyName="GitCommitCount" TaskParameter="CommitCount" />
+    </GitVersion>
+    
+    <ItemGroup>
+
+    <JavaScriptFiles Include="..\src\knockout.concurrency.js"/>
+      
+    </ItemGroup>
+    <CompressorTask
+        CssFiles="@(CssFiles)"
+        DeleteCssFiles="false"
+        CssOutputFile="$(CssOutputFile)"
+        CssCompressionType="YuiStockCompression"
+        JavaScriptCompressionType="YuiStockCompression"
+        JavaScriptFiles="@(JavaScriptFiles)"
+        ObfuscateJavaScript="True"
+        PreserveAllSemicolons="False"
+        DisableOptimizations="Nope"
+        EncodingType="Default"
+        DeleteJavaScriptFiles="false"
+        LineBreakPosition="-1"
+        JavaScriptOutputFile="..\src\$(Filename)-$(MajorVersion).$(GitCommitCount).js"
+        LoggingType="ALittleBit"
+        ThreadCulture="en-US"
+        IsEvalIgnored="false"
+            />
+  </Target>
+</Project>

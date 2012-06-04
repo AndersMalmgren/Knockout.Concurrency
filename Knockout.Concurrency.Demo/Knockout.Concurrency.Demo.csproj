@@ -203,7 +203,9 @@
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>
-    <PostBuildEvent>copy "$(SolutionDir)src\knockout.concurrency.js" "$(ProjectDir)Scripts"</PostBuildEvent>
+    <PostBuildEvent>cd $(SolutionDir)Deploy
+msbuild msbuild.xml
+copy "$(SolutionDir)src\*.js" "$(ProjectDir)Scripts"</PostBuildEvent>
   </PropertyGroup>
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
 </Project>

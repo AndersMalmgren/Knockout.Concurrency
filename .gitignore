@@ -12,3 +12,4 @@ TestResults
 /packages/Ninject.Web.Common.3.0.0.7
 /packages/WebActivator.1.5
 _Resharper*
+/Knockout.Concurrency.Demo/Scripts/Knockout.Concurrency-*.js
