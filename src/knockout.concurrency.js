@@ -257,7 +257,7 @@
                                     if (key == mapping.key(arr2[j])) {
                                         this.run(item, arr2[j], mapping);
                                         found = true;
-                                        continue;
+                                        break;
                                     }
                                 }
 
