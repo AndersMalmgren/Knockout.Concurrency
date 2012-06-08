@@ -6,11 +6,7 @@ obj
 
 # mstest test results
 TestResults
-/packages/Microsoft.Web.Infrastructure.1.0.0.0
-/packages/Ninject.3.0.1.10
-/packages/Ninject.MVC3.3.0.0.6
-/packages/Ninject.Web.Common.3.0.0.7
-/packages/WebActivator.1.5
+/packages/*
 _Resharper*
 /Knockout.Concurrency.Demo/Scripts/Knockout.Concurrency*.js
 /src/Knockout.Concurrency-*.js
