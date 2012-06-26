@@ -219,10 +219,16 @@
             }
 
             for (var index in vm1) {
-                var m1 = vm1[index];
-                var m2 = vm2[index];
-                var listener = m1.concurrency;
                 var mapping = mappings ? mappings[index] : null;
+                var m2Index = mapping && mapping.name ? mapping.name : index;
+
+                var m1 = vm1[index];
+                var m2 = vm2[m2Index];
+
+                if (m1 == null) continue;
+
+                var listener = m1.concurrency;
+
 
                 if (ko.isObservable(m1) && !m1.push) { //observable
                     var val1 = ko.utils.unwrapObservable(m1);
@@ -231,20 +237,14 @@
                     if (this.isComplex(val1)) {
                         this.run(val1, val2, mapping);
                     } else if (listener != null) {
-                        this.compareAndNotify(val1, val2, listener);
+                        this.compareAndNotify(val1, val2, listener, mapping);
                     }
                 } else if (m1.push) { //array or observablearray
                     var observableArray = m1;
                     var arr1 = ko.utils.unwrapObservable(m1);
                     var arr2 = ko.utils.unwrapObservable(m2);
                     if (arr2 != null) {
-                        if (mapping == null) {
-                            for (var i in arr1) {
-                                if (arr2[i] != null) {
-                                    this.run(arr1[i], arr2[i], mapping);
-                                }
-                            }
-                        } else {
+                        if (mapping && mapping.key) {
                             //TODO: find a better search algoritgm that does not have Ordo n^2, the problem is that most good ones need to sort the array.
                             //If we clone the array we get Ordo n*2 for the cloning + whatever complexity the search algorithm has, should be cheaper then doing like now
                             var processed = {};
@@ -274,12 +274,18 @@
                                     this.itemAdded(observableArray, item, mapping);
                                 }
                             }
+                        } else {
+                            for (var i in arr1) {
+                                if (arr2[i] != null) {
+                                    this.run(arr1[i], arr2[i], mapping);
+                                }
+                            }
                         }
                     }
                 } else if (this.isComplex(m1) && m1.$constructor == null) {
                     this.run(m1, m2, mapping);
                 } else if (listener != null) {
-                    this.compareAndNotify(m1, m2, listener);
+                    this.compareAndNotify(m1, m2, listener, mapping);
                 }
             };
         },
@@ -306,9 +312,14 @@
 
             this.notify(true, item.concurrency().options.itemDeletedCaption, helpers.conflictResolvers.itemDeleted, item.concurrency);
         },
-        compareAndNotify: function (val1, val2, listener) {
+        compareAndNotify: function (val1, val2, listener, mapping) {
+            val1 = this.getConverterdValue(val1, mapping);
+            val2 = this.getConverterdValue(val2, mapping);
             var conflict = val1 != val2;
             this.notify(conflict, val2, helpers.conflictResolvers.value, listener);
+        },
+        getConverterdValue: function (val, mapping) {
+            return mapping && mapping.converter ? mapping.converter(val) : val;
         },
         notify: function (conflict, val2, resolver, listener) {
             var unwrapped = listener();
