@@ -213,6 +213,11 @@
         }
     };
     ko.concurrency.Runner.prototype = {
+        clear: function () {
+            if (this.conflicts) {
+                this.conflicts.removeAll();
+            }
+        },
         run: function (vm1, vm2, mappings) {
             if (vm2 == null) { //VM1 is ko object, while VM2 is a json object with less members
                 return false;
@@ -234,7 +239,7 @@
                     var val1 = ko.utils.unwrapObservable(m1);
                     var val2 = ko.utils.unwrapObservable(m2);
 
-                    if (this.isComplex(val1)) {
+                    if (this.isComplex(val1) && listener == null) {
                         this.run(val1, val2, mapping);
                     } else if (listener != null) {
                         this.compareAndNotify(val1, val2, listener, mapping);
