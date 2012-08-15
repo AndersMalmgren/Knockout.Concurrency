@@ -106,6 +106,9 @@
     <Content Include="..\src\knockout.concurrency.js">
       <Link>Scripts\knockout.concurrency.js</Link>
     </Content>
+    <Content Include="..\test\test.js">
+      <Link>test.js</Link>
+    </Content>
     <Content Include="Content\images\icons\merge-16.png" />
     <Content Include="Content\images\icons\resolve-16.png" />
     <Content Include="Content\images\icons\warning-16.png" />

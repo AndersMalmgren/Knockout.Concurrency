@@ -55,14 +55,17 @@
             },
             extendObservableArray: function (arr, options) {
                 arr.concurrencyExtendOptions = options;
-                arr.subscribe(function (value) {
+                var checkArrayForNewItems = function (value) {
                     ko.utils.arrayForEach(value, function (item) {
                         if (item.concurrency == null) {
                             helpers.concurrencyExtendObservable(item, options, arr);
                         }
                     });
+                };
 
-                });
+                if (arr().length > 0)
+                    checkArrayForNewItems(arr());
+                arr.subscribe(checkArrayForNewItems);
             },
             concurrencyExtendObservable: function (observable, options, arr) {
                 observable.concurrency = ko.observable(new ko.concurrency.ConcurrencyViewModel(false, null, observable, options, arr));
