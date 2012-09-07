@@ -111,9 +111,12 @@ test("When traversing view model and a concurrency observable has a complex type
 
     var mapping = {
         propOne: {
-            converter: function (item) {
-                return ko.utils.arrayFirst(clientSideListOfProps, function (item2) {
-                    return item.id == item2.id;
+            comparer: function (item1, item2) {
+                return item1.id == item2.id;
+            },
+            create: function (data) {
+                return ko.utils.arrayFirst(clientSideListOfProps, function (item) {
+                    return data.id == item.id;
                 });
             }
         },
