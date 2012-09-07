@@ -245,7 +245,7 @@
                     if (this.isComplex(val1) && listener == null) {
                         this.run(val1, val2, mapping);
                     } else if (listener != null) {
-                        this.compareAndNotify(val1, val2, listener, mapping);
+                        this.compareAndNotify(val1, val2, listener, mapping, m1, m2);
                     }
                 } else if (m1.push) { //array or observablearray
                     var observableArray = m1;
@@ -320,14 +320,14 @@
 
             this.notify(true, item.concurrency().options.itemDeletedCaption, helpers.conflictResolvers.itemDeleted, item.concurrency);
         },
-        compareAndNotify: function (val1, val2, listener, mapping) {
-            val1 = this.getConverterdValue(val1, mapping);
-            val2 = this.getConverterdValue(val2, mapping);
+        compareAndNotify: function (val1, val2, listener, mapping, m1, m2) {
+            val1 = this.getConverterdValue(val1, m1, mapping);
+            val2 = this.getConverterdValue(val2, m2, mapping);
             var conflict = val1 != val2;
             this.notify(conflict, val2, helpers.conflictResolvers.value, listener);
         },
-        getConverterdValue: function (val, mapping) {
-            return mapping && mapping.converter ? mapping.converter(val) : val;
+        getConverterdValue: function (val, observable, mapping) {
+            return mapping && mapping.converter ? mapping.converter(val, observable) : val;
         },
         notify: function (conflict, val2, resolver, listener) {
             var unwrapped = listener();
