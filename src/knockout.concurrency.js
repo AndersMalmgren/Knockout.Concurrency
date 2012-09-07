@@ -321,10 +321,18 @@
             this.notify(true, item.concurrency().options.itemDeletedCaption, helpers.conflictResolvers.itemDeleted, item.concurrency);
         },
         compareAndNotify: function (val1, val2, listener, mapping, m1, m2) {
-            val1 = this.getConverterdValue(val1, m1, mapping);
-            val2 = this.getConverterdValue(val2, m2, mapping);
-            var conflict = val1 != val2;
-            this.notify(conflict, val2, helpers.conflictResolvers.value, listener);
+            var comparer = this.getComparer(mapping);
+            var conflict = !comparer(val1, val2, m1, m2);
+
+            this.notify(conflict, this.createOtherValue(val2, mapping), helpers.conflictResolvers.value, listener);
+        },
+        createOtherValue: function (otherValue, mapping) {
+            return mapping && mapping.create ? mapping.create(otherValue) : otherValue;
+        },
+        getComparer: function (mapping) {
+            return mapping && mapping.comparer ? mapping.comparer : function (val1, val2) {
+                return val1 == val2;
+            };
         },
         getConverterdValue: function (val, observable, mapping) {
             return mapping && mapping.converter ? mapping.converter(val, observable) : val;
