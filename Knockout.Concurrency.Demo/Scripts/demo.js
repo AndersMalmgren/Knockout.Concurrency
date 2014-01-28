@@ -6,6 +6,7 @@
 };
 
 ko.concurrencyDemo.DogViewModel = function (data) {
+    this.sessionId = ko.concurrencyDemo.guid();
     this.Name = ko.observable().extend({ concurrency: true });
     this.Stray = ko.observable().extend({ concurrency: { presenter: function (value) { return value ? "Yes" : "No"; } } });
 
@@ -16,7 +17,7 @@ ko.concurrencyDemo.DogViewModel = function (data) {
         return this.concurrencyConflicts().length > 0;
     }, this);
 
-    this.polling = new ko.concurrencyDemo.Polling("/Push/DogSaved", { id: data.Id }, $.proxy(this.saved, this));
+    signalR.eventAggregator.subscribe(Knockout.Concurrency.Demo.Events.Message.of("Knockout.Concurrency.Demo.Models.Dog"), this.saved, this, { sessionId: this.sessionId });
 
     return ko.mapping.fromJS(data, ko.concurrencyDemo.DogViewModel.mapping, this);
 };
@@ -31,7 +32,7 @@ ko.concurrencyDemo.DogViewModel.prototype = {
     save: function () {
         var data = ko.toJSON({
             Data: ko.mapping.toJS(this),
-            SessionId: this.polling.sessionId
+            SessionId: this.sessionId
         });
         $.ajax({ url: "/Home/Save", data: data, type: "POST", contentType: 'application/json; charset=utf-8', success: $.proxy(function (response) {
             this.Puppies.remove(function (item) { return item.Id() == 0; });
@@ -56,9 +57,7 @@ ko.concurrencyDemo.DogViewModel.prototype = {
                 }
             }
         };
-        for (var index in data) {
-            this.concurrencyRunner.run(this, data[index], mappings);
-        }
+        this.concurrencyRunner.run(this, data.Data, mappings);
     }
 };
 

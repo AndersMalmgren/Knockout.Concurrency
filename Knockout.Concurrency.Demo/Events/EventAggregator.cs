@@ -19,11 +19,8 @@ namespace Knockout.Concurrency.Demo.Events
 
         public void Publish<T>(T message) where T : class
         {
-            var lookupType = typeof (IHandle<T>);
-
-            subscribers.Where(lookupType.IsInstanceOfType)
-            .Select(s => s as IHandle<T>)
-            .ForEach(s => s.Handle(message));
+            subscribers.OfType<IHandle<T>>()
+                .ForEach(s => s.Handle(message));
         }
     }
 }

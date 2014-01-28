@@ -1,23 +1,20 @@
+using System;
+using System.Web;
 using System.Web.Mvc;
-using Knockout.Concurrency.Demo.Common;
-using Knockout.Concurrency.Demo.Common.Filters;
+using Knockout.Concurrency.Demo;
+using Knockout.Concurrency.Demo.Common.SignalR;
 using Knockout.Concurrency.Demo.Events;
-using Knockout.Concurrency.Demo.Models;
+using Microsoft.AspNet.SignalR;
+using Microsoft.Web.Infrastructure.DynamicModuleHelper;
+using Ninject;
+using Ninject.Web.Common;
 using Ninject.Web.Mvc.FilterBindingSyntax;
 
-[assembly: WebActivator.PreApplicationStartMethod(typeof(Knockout.Concurrency.Demo.App_Start.NinjectWebCommon), "Start")]
-[assembly: WebActivator.ApplicationShutdownMethodAttribute(typeof(Knockout.Concurrency.Demo.App_Start.NinjectWebCommon), "Stop")]
+[assembly: WebActivator.PreApplicationStartMethod(typeof(NinjectWebCommon), "Start")]
+[assembly: WebActivator.ApplicationShutdownMethodAttribute(typeof(NinjectWebCommon), "Stop")]
 
-namespace Knockout.Concurrency.Demo.App_Start
+namespace Knockout.Concurrency.Demo
 {
-    using System;
-    using System.Web;
-
-    using Microsoft.Web.Infrastructure.DynamicModuleHelper;
-
-    using Ninject;
-    using Ninject.Web.Common;
-
     public static class NinjectWebCommon 
     {
         private static readonly Bootstrapper bootstrapper = new Bootstrapper();
@@ -47,10 +44,11 @@ namespace Knockout.Concurrency.Demo.App_Start
         private static IKernel CreateKernel()
         {
             var kernel = new StandardKernel();
-            kernel.BindFilter<HandleTimeout>(FilterScope.Global, 0);
             kernel.Bind<Func<IKernel>>().ToMethod(ctx => () => new Bootstrapper().Kernel);
             kernel.Bind<IHttpModule>().To<HttpApplicationInitializationHttpModule>();
-            
+
+            GlobalHost.DependencyResolver = new SignalRNinjectDependencyResolver(kernel);
+
             RegisterServices(kernel);
             return kernel;
         }
@@ -62,8 +60,7 @@ namespace Knockout.Concurrency.Demo.App_Start
         private static void RegisterServices(IKernel kernel)
         {
             kernel.Bind<IEventAggregator>().To<EventAggregator>().InSingletonScope();
-            kernel.Bind<IEventQueue<Dog>>().To<EventQueue<Dog>>().InSingletonScope();
-            kernel.Bind<IConfig>().To<Config>();
+            kernel.Bind<SignalR.EventAggregatorProxy.EventAggregation.IEventAggregator>().To<EventAggregatorProxy>();
         }        
     }
 }
