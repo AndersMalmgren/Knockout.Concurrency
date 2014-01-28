@@ -4,9 +4,9 @@
     <title>@ViewBag.Title</title>
     <link href="@Url.Content("~/Content/Site.css")" rel="stylesheet" type="text/css" />
     <script src="@Url.Content("~/Scripts/jquery-1.4.4.min.js")" type="text/javascript"></script>
-    <script src="http://cloud.github.com/downloads/SteveSanderson/knockout/knockout-2.1.0.js" type="text/javascript"></script>
-    <script src="https://raw.github.com/SteveSanderson/knockout.mapping/master/build/output/knockout.mapping-latest.js" type="text/javascript"></script>
-    <script src="@Url.Content("~/Scripts/knockout.concurrency.js")" type="text/javascript"></script>
+    <script src="http://knockoutjs.com/downloads/knockout-3.0.0.js" type="text/javascript"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/knockout.mapping/2.4.1/knockout.mapping.js" type="text/javascript"></script>
+    <script src="http://andersmalmgren.github.io/Knockout.Concurrency/src/knockout.concurrency.js" type="text/javascript"></script>
     <script src="@Url.Content("~/Scripts/util.js")" type="text/javascript"></script>
 </head>
 
@@ -16,10 +16,6 @@
         <div id="header">
             <div id="title">
                 <h1>My MVC Application</h1>
-            </div>
-
-            <div id="logindisplay">
-                @Html.Partial("_LogOnPartial")
             </div>
 
             <div id="menucontainer">
