@@ -1,0 +1,20 @@
+{
+  "name": "signalr.eventaggregatorproxy",
+  "version": "8.0.286.0",
+  "description": "Client library for SignalR.EventAggregatorProxy",
+  "keywords": [
+    "signalr",
+    "servicebus",
+    "EventAggregator",
+    "proxy"
+  ],
+  "homepage": "https://github.com/AndersMalmgren/SignalR.EventAggregatorProxy",
+  "license": "mit",
+  "author": "Anders Malmgren (https://github.com/AndersMalmgren/)",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AndersMalmgren/SignalR.EventAggregatorProxy.git"
+  },
+  "main": "signalR.eventAggregator.js",
+  "unpkg": "signalR.eventAggregator.min.js"
+}

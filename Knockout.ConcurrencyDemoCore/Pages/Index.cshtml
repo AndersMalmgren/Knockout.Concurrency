@@ -1,0 +1,37 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Kennel registration";
+}
+
+<h2>Kennel registration</h2>
+
+<div id="app">
+    <p>
+        <label>Name</label>
+        <input data-bind="value: name" />
+    </p>
+    <p>
+        <label>Stray</label>
+        <input data-bind="checked: stray" type="checkbox" />
+    </p>
+    <h3>Offspring</h3><button data-bind="click: addPuppy">Add</button>
+    <div data-bind="foreach: puppies">
+        <p>
+            <label>Name</label>
+            <input data-bind="value: name" />
+            <button data-bind="click: $root.removePuppy.bind($root)">Remove</button>
+        </p>
+    </div>
+    <button data-bind="click: save, disable: hasConflicts">Save</button>
+    <button data-bind="click: resolveAll, visible: hasConflicts">Resolve all</button>
+</div>
+
+<script src="~/lib/microsoft/signalr/dist/browser/signalr.js"></script>
+<script src="~/lib/signalr.eventaggregatorproxy/signalR.eventAggregator.js" asp-append-version="true"></script>
+<script src="/eventAggregation/events" asp-append-version="true"></script>
+<script src="~/lib/knockout/build/output/knockout-latest.js" asp-append-version="true"></script>  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/knockout.mapping/2.4.1/knockout.mapping.js" type="text/javascript"></script>
+<script src="https://andersmalmgren.github.io/Knockout.Concurrency/src/knockout.concurrency.js" type="text/javascript"></script>
+<script src="~/js/util.js" asp-append-version="true"></script>  
+<script src="~/js/demo.js" asp-append-version="true"></script>  

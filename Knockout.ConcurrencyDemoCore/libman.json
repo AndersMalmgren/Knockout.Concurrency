@@ -1,0 +1,18 @@
+{
+  "version": "1.0",
+  "defaultProvider": "unpkg",
+  "libraries": [
+    {
+      "library": "knockout@3.5.1",
+      "destination": "wwwroot/lib/knockout/"
+    },
+    {
+      "library": "signalr.eventaggregatorproxy@8.0.28-6.0",
+      "destination": "wwwroot/lib/signalr.eventaggregatorproxy/"
+    },
+    {
+      "library": "@microsoft/signalr@8.0.0",
+      "destination": "wwwroot/lib/microsoft/signalr/"
+    }
+  ]
+}
