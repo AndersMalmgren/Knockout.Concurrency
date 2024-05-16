@@ -137,7 +137,7 @@
                             var binding = document.createElement('SPAN');
                             binding.setAttribute("data-bind", "concurrency: concurrency");
 
-                            element.appendChild(binding);
+                            (element.lastElementChild ?? element).appendChild(binding);
                         }
                     }
                     return initForeach(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext);
